@@ -72,9 +72,20 @@ describe(Server, function() {
     // eslint-disable-next-line require-atomic-updates
     server = new Server();
 
+    // eslint-disable-next-line no-console
+    console.error('before start');
+
     let port = await server.start();
 
+    // eslint-disable-next-line no-console
+    console.error('after start');
+    // eslint-disable-next-line no-console
+    console.error('before stop');
+
     await server.stop();
+
+    // eslint-disable-next-line no-console
+    console.error('after stop');
 
     expect(port).to.equal(4200);
 

@@ -68,9 +68,18 @@ class Server {
     this.server = null;
 
     while (this.port) {
+      // eslint-disable-next-line no-console
+      console.error('port', this.port);
       let foundPort = await getPort({ port: this.port });
+      // eslint-disable-next-line no-console
+      console.error('foundPort', foundPort);
       if (foundPort === this.port) {
+        // eslint-disable-next-line no-console
+        console.error('match');
         this.port = null;
+      } else {
+        // eslint-disable-next-line no-console
+        console.error('no match');
       }
     }
   }
