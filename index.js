@@ -2,6 +2,7 @@
 
 const execa = require('execa');
 const pkgDir = require('pkg-dir');
+const getPort = require('get-port');
 
 class Server {
   async start() {
@@ -13,12 +14,12 @@ class Server {
     this.server.stderr.pipe(process.stderr);
 
     // eslint-disable-next-line no-async-promise-executor
-    let port = await new Promise(async(resolve, reject) => {
+    this.port = await new Promise(async(resolve, reject) => {
       this.server.stdout.on('data', data => {
         let str = data.toString();
         let matches = str.match(/^Build successful \(\d+ms\) – Serving on http:\/\/localhost:(\d+)\/$/m);
         if (matches) {
-          resolve(matches[1]);
+          resolve(parseInt(matches[1], 10));
         }
       });
 
@@ -36,7 +37,7 @@ class Server {
       reject(new Error(stderr));
     });
 
-    return port;
+    return this.port;
   }
 
   async stop() {
@@ -56,6 +57,13 @@ class Server {
     });
 
     this.server = null;
+
+    while (this.port) {
+      let foundPort = await getPort({ port: this.port });
+      if (foundPort === this.port) {
+        this.port = null;
+      }
+    }
   }
 }
 

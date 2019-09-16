@@ -76,7 +76,7 @@ describe(Server, function() {
 
     await server.stop();
 
-    expect(port).to.equal('4200');
+    expect(port).to.equal(4200);
 
     await createBuildError();
 

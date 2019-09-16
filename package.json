@@ -25,6 +25,7 @@
   },
   "dependencies": {
     "execa": "^2.0.4",
+    "get-port": "^5.0.0",
     "pkg-dir": "^4.2.0"
   },
   "peerDependencies": {
