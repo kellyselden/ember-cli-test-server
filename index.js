@@ -28,8 +28,13 @@ class Server {
         let str = data.toString();
         stderr += str;
         if (/^Stack Trace and Error Report: /m.test(str)) {
-          this.server.kill();
+          this.kill();
         }
+      });
+
+      // await this.server;
+      await new Promise(resolve => {
+        this.server.once('close', resolve);
       });
 
       await this.waitForDeath();
@@ -45,17 +50,21 @@ class Server {
       return;
     }
 
-    this.server.kill();
+    this.kill();
 
-    await this.waitForDeath();
-  }
-
-  async waitForDeath() {
     // await this.server;
     await new Promise(resolve => {
       this.server.once('exit', resolve);
     });
 
+    await this.waitForDeath();
+  }
+
+  async kill() {
+    this.server.kill();
+  }
+
+  async waitForDeath() {
     this.server = null;
 
     while (this.port) {
