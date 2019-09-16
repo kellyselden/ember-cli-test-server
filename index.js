@@ -76,7 +76,6 @@ class Server {
 
     if (process.platform === 'linux') {
       let psList = require('ps-list');
-      let fkill = require('fkill');
       let startPrinting;
       for (let x of await psList()) {
         if (x.name === 'npm') {
