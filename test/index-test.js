@@ -14,11 +14,12 @@ const projectName = 'my-app';
 const originalCwd = process.cwd();
 
 describe(Server, function() {
-  this.timeout(5 * 60 * 1000);
+  this.timeout(10 * 60 * 1000);
 
   let tmp;
   let projectPath;
   let server;
+  let oldFile;
 
   beforeEach(async function() {
     tmp = await tmpDir();
@@ -32,14 +33,30 @@ describe(Server, function() {
     process.chdir(originalCwd);
   });
 
-  async function createBuildError() {
+  async function createInstantBuildError() {
     let filePath = path.join(projectPath, 'ember-cli-build.js');
 
-    let file = await readFile(filePath, 'utf8');
+    oldFile = await readFile(filePath, 'utf8');
 
-    file = file.replace('return ', '');
+    let newFile = oldFile.replace('return ', '');
 
-    await writeFile(filePath, file);
+    await writeFile(filePath, newFile);
+  }
+
+  async function createHungBuildError() {
+    let filePath = path.join(projectPath, 'ember-cli-build.js');
+
+    oldFile = await readFile(filePath, 'utf8');
+
+    let newFile = oldFile.replace('return ', 'app.import("node_modules/ember-source/missing.js"); return ');
+
+    await writeFile(filePath, newFile);
+  }
+
+  async function resetBuildFile() {
+    let filePath = path.join(projectPath, 'ember-cli-build.js');
+
+    await writeFile(filePath, oldFile);
   }
 
   it('works', async function() {
@@ -89,15 +106,30 @@ describe(Server, function() {
 
     expect(port).to.equal(4200);
 
-    await createBuildError();
+    await createInstantBuildError();
 
     // eslint-disable-next-line require-atomic-updates
     server = new Server();
 
-    await expect(server.start(), 'handles a build error')
+    await expect(server.start(), 'handles instant build error')
       .to.eventually.be.rejectedWith('undefined is not a Broccoli node');
 
-    await expect(server.stop(), 'can stop after a build error')
+    await expect(server.stop(), 'can stop after instant build error')
       .to.eventually.be.fulfilled;
+
+    await resetBuildFile();
+
+    await createHungBuildError();
+
+    // eslint-disable-next-line require-atomic-updates
+    server = new Server();
+
+    await expect(server.start(), 'handles hung build error')
+      .to.eventually.be.rejectedWith('Build Error ');
+
+    await expect(server.stop(), 'can stop after hung build error')
+      .to.eventually.be.fulfilled;
+
+    await resetBuildFile();
   });
 });

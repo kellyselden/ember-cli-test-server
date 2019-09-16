@@ -1,7 +1,8 @@
 os:
-- linux
+# ordered slow to fast
 - osx
 - windows
+- linux
 language: node_js
 node_js:
 - '8'

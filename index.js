@@ -2,7 +2,8 @@
 
 const execa = require('execa');
 const pkgDir = require('pkg-dir');
-// const getPort = require('get-port');
+const getPort = require('get-port');
+const fkill = require('fkill');
 
 class Server {
   async start() {
@@ -12,8 +13,6 @@ class Server {
 
     this.server.stdout.pipe(process.stdout);
     this.server.stderr.pipe(process.stderr);
-
-    let port;
 
     // eslint-disable-next-line no-async-promise-executor
     this.port = await new Promise(async(resolve, reject) => {
@@ -28,26 +27,27 @@ class Server {
         let str = data.toString();
         let matches = str.match(/^Build successful \(\d+ms\) – Serving on http:\/\/localhost:(\d+)\/$/m);
         if (matches) {
-          this.server.removeListener('exit', close);
-          port = parseInt(matches[1], 10);
-        }
-        matches = str.match(/^Slowest Nodes /m);
-        if (matches) {
-          resolve(port);
+          this.server.removeListener('close', close);
+          resolve(parseInt(matches[1], 10));
         }
       });
 
       let stderr = '';
-      this.server.stderr.on('data', data => {
+      this.server.stderr.on('data', async data => {
         let str = data.toString();
         stderr += str;
-        if (/^Stack Trace and Error Report: /m.test(str)) {
-          this.kill();
+        let isLocalError = /^Stack Trace and Error Report: /m.test(str);
+        let isCIError = /^ERROR Summary:$/m.test(str);
+        if (isLocalError || isCIError) {
+          this.server.removeListener('close', close);
+          // Build errors sometimes hang and sometimes exit on their own.
+          let silent = true;
+          await this.kill(silent);
+          await close();
         }
       });
 
-      // await this.server;
-      this.server.once('exit', close);
+      this.server.once('close', close);
     });
 
     return this.port;
@@ -58,66 +58,61 @@ class Server {
       return;
     }
 
-    this.kill();
-
-    // await this.server;
-    await new Promise(resolve => {
-      this.server.once('exit', resolve);
-    });
-
-    // this.server.kill('SIGKILL');
+    let silent = process.platform === 'win32';
+    await this.kill(silent);
 
     await this.waitForDeath();
   }
 
-  async kill() {
-    // this.server.kill();
-    let fkill = require('fkill');
-    await fkill(this.server.pid, { force: true });
+  async kill(silent) {
+    await fkill(this.server.pid, {
+      force: process.platform === 'win32',
+      ...silent ? { silent } : {}
+    });
   }
 
   async waitForDeath() {
     this.server = null;
 
-    let psList = require('ps-list');
-    let fkill = require('fkill');
-    let startPrinting;
-    for (let x of await psList()) {
-      // eslint-disable-next-line no-console
-      console.error(x);
-      if (x.name === 'npm') {
-        startPrinting = true;
-      }
-      if (startPrinting) {
-        // eslint-disable-next-line no-console
-        console.error(x);
-      }
-      if (x.name === 'ember') {
-        // eslint-disable-next-line no-console
-        console.error('killing');
-        try {
-          await fkill(x.pid);
-        } catch (err) {}
-        // eslint-disable-next-line no-console
-        console.error('killed');
+    if (process.platform === 'linux') {
+      let psList = require('ps-list');
+      let fkill = require('fkill');
+      let startPrinting;
+      for (let x of await psList()) {
+        if (x.name === 'npm') {
+          startPrinting = true;
+        }
+        if (startPrinting) {
+          // eslint-disable-next-line no-console
+          console.error(x);
+        }
+        if (x.name === 'ember') {
+          // eslint-disable-next-line no-console
+          console.error('killing');
+          await fkill(x.pid, { silent: true });
+          // eslint-disable-next-line no-console
+          console.error('killed');
+        }
       }
     }
 
-    // while (this.port) {
-    //   // eslint-disable-next-line no-console
-    //   console.error('port', this.port);
-    //   let foundPort = await getPort({ port: this.port });
-    //   // eslint-disable-next-line no-console
-    //   console.error('foundPort', foundPort);
-    //   if (foundPort === this.port) {
-    //     // eslint-disable-next-line no-console
-    //     console.error('match');
-    //     this.port = null;
-    //   } else {
-    //     // eslint-disable-next-line no-console
-    //     console.error('no match');
-    //   }
-    // }
+    while (this.port) {
+      // eslint-disable-next-line no-console
+      console.error('port', this.port);
+      let foundPort = await getPort({ port: this.port });
+      // eslint-disable-next-line no-console
+      console.error('foundPort', foundPort);
+      if (foundPort === this.port) {
+        // eslint-disable-next-line no-console
+        console.error('match');
+        this.port = null;
+      } else {
+        // eslint-disable-next-line no-console
+        console.error('no match');
+      }
+    }
+
+    this.port = null;
   }
 }
 
