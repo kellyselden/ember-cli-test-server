@@ -101,13 +101,11 @@ class Server {
       let foundPort = await getPort({ port: this.port });
       // eslint-disable-next-line no-console
       console.error('foundPort', foundPort);
-      if (foundPort === this.port) {
-        // eslint-disable-next-line no-console
-        console.error('match');
+      let isMatch = foundPort === this.port;
+      // eslint-disable-next-line no-console
+      console.error('isMatch', isMatch);
+      if (isMatch) {
         this.port = null;
-      } else {
-        // eslint-disable-next-line no-console
-        console.error('no match');
       }
     }
   }
