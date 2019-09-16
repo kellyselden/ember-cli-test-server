@@ -4,6 +4,7 @@ const execa = require('execa');
 const pkgDir = require('pkg-dir');
 const getPort = require('get-port');
 const fkill = require('fkill');
+const psList = require('ps-list');
 
 class Server {
   async start() {
@@ -75,20 +76,19 @@ class Server {
     this.server = null;
 
     if (process.platform === 'linux') {
-      let psList = require('ps-list');
       let startPrinting;
-      for (let x of await psList()) {
-        if (x.name === 'npm') {
+      for (let ps of await psList()) {
+        if (ps.name === 'npm') {
           startPrinting = true;
         }
         if (startPrinting) {
           // eslint-disable-next-line no-console
-          console.error(x);
+          console.error(ps);
         }
-        if (x.name === 'ember') {
+        if (ps.name === 'ember') {
           // eslint-disable-next-line no-console
           console.error('killing');
-          await fkill(x.pid, { silent: true });
+          await fkill(ps.pid, { silent: true });
           // eslint-disable-next-line no-console
           console.error('killed');
         }
