@@ -1,7 +1,7 @@
 os:
 # ordered slow to fast
-- osx
 - windows
+- osx
 - linux
 language: node_js
 node_js:
