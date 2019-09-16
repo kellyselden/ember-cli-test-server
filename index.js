@@ -61,7 +61,7 @@ class Server {
   }
 
   async kill() {
-    this.server.kill();
+    this.server.kill('SIGINT');
   }
 
   async waitForDeath() {
