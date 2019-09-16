@@ -1,0 +1,19 @@
+{
+  "name": "ember-cli-test-server",
+  "version": "0.0.0",
+  "description": "Start a long-running EmberCLI server in a test environment",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/kellyselden/ember-cli-test-server.git"
+  },
+  "author": "Kelly Selden",
+  "license": "MIT",
+  "bugs": {
+    "url": "https://github.com/kellyselden/ember-cli-test-server/issues"
+  },
+  "homepage": "https://github.com/kellyselden/ember-cli-test-server#readme"
+}
