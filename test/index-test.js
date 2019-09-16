@@ -18,25 +18,6 @@ describe(Server, function() {
   let projectPath;
   let server;
 
-  async function newProject({
-    skipNpm
-  } = {}) {
-    await execa('ember', [
-      'new',
-      'my-app',
-      '--yarn', // temp
-      '-sg',
-      ...skipNpm ? ['-sn'] : []
-    ], {
-      cwd: tmp,
-      stdio: 'inherit'
-    });
-
-    projectPath = path.join(tmp, projectName);
-
-    process.chdir(projectPath);
-  }
-
   beforeEach(async function() {
     tmp = await tmpDir();
   });
@@ -49,51 +30,61 @@ describe(Server, function() {
     process.chdir(originalCwd);
   });
 
-  describe('no error', function() {
-    beforeEach(async function() {
-      await newProject();
+  async function createBuildError() {
+    let filePath = path.join(projectPath, 'ember-cli-build.js');
+
+    let file = await readFile(filePath, 'utf8');
+
+    file = file.replace('return ', '');
+
+    await writeFile(filePath, file);
+  }
+
+  it('works', async function() {
+    await execa('ember', [
+      'new',
+      'my-app',
+      '-sg',
+      '-sn'
+    ], {
+      cwd: tmp,
+      stdio: 'inherit'
     });
 
-    async function createBuildError() {
-      let filePath = path.join(projectPath, 'ember-cli-build.js');
+    projectPath = path.join(tmp, projectName);
 
-      let file = await readFile(filePath, 'utf8');
+    process.chdir(projectPath);
 
-      file = file.replace('return ', '');
+    server = new Server();
 
-      await writeFile(filePath, file);
-    }
+    await expect(server.start(), 'handles missing dependencies error')
+      .to.eventually.be.rejectedWith('node_modules appears empty');
 
-    it('works', async function() {
-      server = new Server();
+    await expect(server.stop(), 'can stop after dependencies error')
+      .to.eventually.be.fulfilled;
 
-      let port = await server.start();
-
-      await server.stop();
-
-      expect(port).to.equal('4200');
+    await execa('yarn', ['install'], {
+      stdio: 'inherit'
     });
 
-    it('handles a build error', async function() {
-      await createBuildError();
+    // eslint-disable-next-line require-atomic-updates
+    server = new Server();
 
-      server = new Server();
+    let port = await server.start();
 
-      await expect(server.start()).to.eventually.be.rejectedWith('undefined is not a Broccoli node');
-    });
-  });
+    await server.stop();
 
-  describe('error', function() {
-    beforeEach(async function() {
-      await newProject({
-        skipNpm: true
-      });
-    });
+    expect(port).to.equal('4200');
 
-    it('handles missing dependencies error', async function() {
-      server = new Server();
+    await createBuildError();
 
-      await expect(server.start()).to.eventually.be.rejectedWith('node_modules appears empty');
-    });
+    // eslint-disable-next-line require-atomic-updates
+    server = new Server();
+
+    await expect(server.start(), 'handles a build error')
+      .to.eventually.be.rejectedWith('undefined is not a Broccoli node');
+
+    await expect(server.stop(), 'can stop after a build error')
+      .to.eventually.be.fulfilled;
   });
 });
