@@ -63,7 +63,7 @@ describe(Server, function() {
     await expect(server.stop(), 'can stop after dependencies error')
       .to.eventually.be.fulfilled;
 
-    await execa('yarn', ['install'], {
+    await execa('npm', ['install'], {
       stdio: 'inherit'
     });
 
