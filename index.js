@@ -110,8 +110,6 @@ class Server {
         console.error('no match');
       }
     }
-
-    this.port = null;
   }
 }
 
