@@ -17,12 +17,15 @@ class Server {
 
     // eslint-disable-next-line no-async-promise-executor
     this.port = await new Promise(async(resolve, reject) => {
-      let self = this;
-      async function close() {
-        await self.waitForDeath();
+      let stderr = '';
+
+      let close = async() => {
+        await this.waitForDeath();
 
         reject(new Error(stderr));
-      }
+      };
+
+      this.server.once('close', close);
 
       this.server.stdout.on('data', data => {
         let str = data.toString();
@@ -33,7 +36,6 @@ class Server {
         }
       });
 
-      let stderr = '';
       this.server.stderr.on('data', async data => {
         let str = data.toString();
         stderr += str;
@@ -47,8 +49,6 @@ class Server {
           await close();
         }
       });
-
-      this.server.once('close', close);
     });
 
     return this.port;
