@@ -1,6 +1,4 @@
 os:
-# ordered slow to fast
-- windows
 - osx
 - linux
 language: node_js
@@ -15,3 +13,8 @@ env:
 - DEBUG=ember-cli-test-server
 before_script:
 - npm run lint
+jobs:
+  include:
+  - os: windows
+    script: npm test -- --retries=1
+
