@@ -27,6 +27,7 @@
     "debug": "^4.2.0",
     "execa": "^9.0.0",
     "fkill": "^9.0.0",
+    "get-port": "^7.1.0",
     "package-directory": "^8.1.0",
     "ps-list": "^8.0.0"
   },
