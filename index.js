@@ -17,8 +17,7 @@ class Server {
     this.server.stdout.pipe(process.stdout);
     this.server.stderr.pipe(process.stderr);
 
-    // eslint-disable-next-line no-async-promise-executor
-    let port = await new Promise(async(resolve, reject) => {
+    let port = await new Promise((resolve, reject) => {
       let stderr = '';
 
       let close = async() => {
