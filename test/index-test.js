@@ -14,7 +14,7 @@ const projectName = 'my-app';
 const originalCwd = process.cwd();
 
 describe(Server, function() {
-  this.timeout(10 * 60 * 1000);
+  this.timeout(5 * 60 * 1000);
 
   let tmp;
   let projectPath;
