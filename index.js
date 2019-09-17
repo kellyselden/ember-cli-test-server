@@ -35,20 +35,28 @@ class Server {
         let matches = str.match(/^Build successful \(\d+ms\) – Serving on http:\/\/localhost:(\d+)\/$/m);
         if (matches) {
           this.server.removeListener('close', close);
-          resolve(parseInt(matches[1], 10));
+
+          let port = parseInt(matches[1], 10);
+
+          resolve(port);
         }
       });
 
       this.server.stderr.on('data', async data => {
         let str = data.toString();
+
         stderr += str;
+
         let isLocalError = /^Stack Trace and Error Report: /m.test(str);
         let isCIError = /^ERROR Summary:$/m.test(str);
+
         if (isLocalError || isCIError) {
           this.server.removeListener('close', close);
+
           // Build errors sometimes hang and sometimes exit on their own.
           let silent = true;
           await this.kill(silent);
+
           await close();
         }
       });
