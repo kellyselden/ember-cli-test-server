@@ -2,6 +2,7 @@
 
 const execa = require('execa');
 const pkgDir = require('pkg-dir');
+const getPort = require('get-port');
 const fkill = require('fkill');
 const psList = require('ps-list');
 const debug = require('debug')(require('./package').name);
@@ -17,7 +18,7 @@ class Server {
     this.server.stdout.pipe(process.stdout);
     this.server.stderr.pipe(process.stderr);
 
-    let port = await new Promise((resolve, reject) => {
+    this.port = await new Promise((resolve, reject) => {
       let stderr = '';
 
       let close = async() => {
@@ -62,7 +63,7 @@ class Server {
 
     debug('started');
 
-    return port;
+    return this.port;
   }
 
   async stop() {
@@ -105,6 +106,22 @@ class Server {
 
           debug(`killed pid ${ps.pid}`);
         }
+      }
+    }
+
+    while (this.port) {
+      debug('port', this.port);
+
+      let foundPort = await getPort({ port: this.port });
+
+      debug('foundPort', foundPort);
+
+      let isMatch = foundPort === this.port;
+
+      debug('isMatch', isMatch);
+
+      if (isMatch) {
+        this.port = null;
       }
     }
 
