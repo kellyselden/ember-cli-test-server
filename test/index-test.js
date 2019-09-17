@@ -82,27 +82,17 @@ describe(Server, function() {
     await expect(server.stop(), 'can stop after dependencies error')
       .to.eventually.be.fulfilled;
 
-    await execa('npm', ['install'], { // temp
+    await execa('npm', ['install'], {
       stdio: 'inherit'
     });
 
     // eslint-disable-next-line require-atomic-updates
     server = new Server();
 
-    // eslint-disable-next-line no-console
-    console.error('before start');
-
     let port = await server.start();
-
-    // eslint-disable-next-line no-console
-    console.error('after start');
-    // eslint-disable-next-line no-console
-    console.error('before stop');
 
     await server.stop();
 
-    // eslint-disable-next-line no-console
-    console.error('after stop');
 
     expect(port).to.equal(4200);
 
