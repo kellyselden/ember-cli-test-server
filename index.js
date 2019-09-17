@@ -5,9 +5,12 @@ const pkgDir = require('pkg-dir');
 const getPort = require('get-port');
 const fkill = require('fkill');
 const psList = require('ps-list');
+const debug = require('debug')(require('./package').name);
 
 class Server {
   async start() {
+    debug('starting');
+
     this.server = execa('npm', ['start'], {
       cwd: await pkgDir()
     });
@@ -51,18 +54,22 @@ class Server {
       });
     });
 
+    debug('started');
+
     return this.port;
   }
 
   async stop() {
-    if (!this.server) {
-      return;
+    debug('stopping');
+
+    if (this.server) {
+      let silent = process.platform === 'win32';
+      await this.kill(silent);
+
+      await this.waitForDeath();
     }
 
-    let silent = process.platform === 'win32';
-    await this.kill(silent);
-
-    await this.waitForDeath();
+    debug('stopped');
   }
 
   async kill(silent) {
@@ -73,41 +80,45 @@ class Server {
   }
 
   async waitForDeath() {
-    this.server = null;
-
     if (process.platform === 'linux') {
       let startPrinting;
+
       for (let ps of await psList()) {
         if (ps.name === 'npm') {
           startPrinting = true;
         }
+
         if (startPrinting) {
-          // eslint-disable-next-line no-console
-          console.error(ps);
+          debug(ps);
         }
+
         if (ps.name === 'ember') {
-          // eslint-disable-next-line no-console
-          console.error('killing');
+          debug(`killing pid ${ps.pid}`);
+
           await fkill(ps.pid, { silent: true });
-          // eslint-disable-next-line no-console
-          console.error('killed');
+
+          debug(`killed pid ${ps.pid}`);
         }
       }
     }
 
     while (this.port) {
-      // eslint-disable-next-line no-console
-      console.error('port', this.port);
+      debug('port', this.port);
+
       let foundPort = await getPort({ port: this.port });
-      // eslint-disable-next-line no-console
-      console.error('foundPort', foundPort);
+
+      debug('foundPort', foundPort);
+
       let isMatch = foundPort === this.port;
-      // eslint-disable-next-line no-console
-      console.error('isMatch', isMatch);
+
+      debug('isMatch', isMatch);
+
       if (isMatch) {
         this.port = null;
       }
     }
+
+    this.server = null;
   }
 }
 

@@ -11,5 +11,7 @@ branches:
   - master
   # npm version tags
   - /^v\d+\.\d+\.\d+$/
+env:
+- DEBUG=ember-cli-test-server
 before_script:
 - npm run lint

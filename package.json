@@ -24,6 +24,7 @@
     "node": ">=8.10"
   },
   "dependencies": {
+    "debug": "^4.1.1",
     "execa": "^2.0.4",
     "fkill": "^6.2.0",
     "get-port": "^5.0.0",
