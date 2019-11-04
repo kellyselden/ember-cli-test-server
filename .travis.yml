@@ -17,4 +17,3 @@ jobs:
   include:
   - os: windows
     script: npm test -- --retries=1
-
