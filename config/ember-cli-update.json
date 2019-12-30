@@ -1,0 +1,15 @@
+{
+  "schemaVersion": 0,
+  "packages": [
+    {
+      "name": "@kellyselden/node-template",
+      "version": "0.0.1",
+      "blueprints": [
+        {
+          "name": "@kellyselden/node-template",
+          "isBaseBlueprint": true
+        }
+      ]
+    }
+  ]
+}
