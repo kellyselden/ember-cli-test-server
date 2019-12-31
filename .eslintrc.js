@@ -24,6 +24,7 @@ module.exports = {
         'plugin:mocha/recommended'
       ],
       rules: {
+        'mocha/no-exclusive-tests': 'error',
         'mocha/no-hooks-for-single-case': 'off'
       }
     }
