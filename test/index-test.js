@@ -77,7 +77,7 @@ describe(Server, function() {
     server = new Server();
 
     await expect(server.start(), 'handles missing dependencies error')
-      .to.eventually.be.rejectedWith('node_modules appears empty');
+      .to.eventually.be.rejectedWith('Required packages are missing');
 
     await expect(server.stop(), 'can stop after dependencies error')
       .to.eventually.be.fulfilled;
