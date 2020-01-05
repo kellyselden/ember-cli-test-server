@@ -10,8 +10,10 @@ class Server {
   async start() {
     debug('starting');
 
+    let cwd = await pkgDir();
+
     this.server = execa('npm', ['start'], {
-      cwd: await pkgDir()
+      cwd
     });
 
     this.server.stdout.pipe(process.stdout);
