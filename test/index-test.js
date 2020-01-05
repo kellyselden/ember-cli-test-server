@@ -11,7 +11,6 @@ const execa = require('execa');
 const Server = require('..');
 
 const projectName = 'my-app';
-const originalCwd = process.cwd();
 
 describe(Server, function() {
   this.timeout(5 * 60 * 1000);
@@ -42,8 +41,6 @@ describe(Server, function() {
     if (server) {
       await server.stop();
     }
-
-    process.chdir(originalCwd);
   });
 
   async function createInstantBuildError() {
@@ -73,24 +70,27 @@ describe(Server, function() {
   }
 
   it('works', async function() {
-    process.chdir(projectPath);
+    let options = {
+      cwd: projectPath
+    };
 
     server = new Server();
 
-    await expect(server.start(), 'handles missing dependencies error')
+    await expect(server.start(options), 'handles missing dependencies error')
       .to.eventually.be.rejectedWith('Required packages are missing');
 
     await expect(server.stop(), 'can stop after dependencies error')
       .to.eventually.be.fulfilled;
 
     await execa('npm', ['install'], {
+      cwd: projectPath,
       stdio: 'inherit'
     });
 
     // eslint-disable-next-line require-atomic-updates
     server = new Server();
 
-    let port = await server.start();
+    let port = await server.start(options);
 
     await server.stop();
 
@@ -101,7 +101,7 @@ describe(Server, function() {
     // eslint-disable-next-line require-atomic-updates
     server = new Server();
 
-    await expect(server.start(), 'handles instant build error')
+    await expect(server.start(options), 'handles instant build error')
       .to.eventually.be.rejectedWith('undefined is not a Broccoli node');
 
     await expect(server.stop(), 'can stop after instant build error')
@@ -114,7 +114,7 @@ describe(Server, function() {
     // eslint-disable-next-line require-atomic-updates
     server = new Server();
 
-    await expect(server.start(), 'handles hung build error')
+    await expect(server.start(options), 'handles hung build error')
       .to.eventually.be.rejectedWith('Build Error ');
 
     await expect(server.stop(), 'can stop after hung build error')
