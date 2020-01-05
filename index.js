@@ -7,13 +7,14 @@ const psList = require('ps-list');
 const debug = require('debug')(require('./package').name);
 
 class Server {
-  async start() {
+  async start(options) {
     debug('starting');
 
     let cwd = await pkgDir();
 
     this.server = execa('npm', ['start'], {
-      cwd
+      cwd,
+      ...options
     });
 
     this.server.stdout.pipe(process.stdout);
