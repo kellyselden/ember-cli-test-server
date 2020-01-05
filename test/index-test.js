@@ -67,7 +67,9 @@ describe(Server, function() {
       '-sn'
     ], {
       cwd: tmp,
-      stdio: 'inherit'
+      stdio: 'inherit',
+      preferLocal: true,
+      localDir: __dirname
     });
 
     projectPath = path.join(tmp, projectName);
