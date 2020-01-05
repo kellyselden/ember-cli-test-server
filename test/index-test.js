@@ -16,13 +16,26 @@ const originalCwd = process.cwd();
 describe(Server, function() {
   this.timeout(5 * 60 * 1000);
 
-  let tmp;
   let projectPath;
   let server;
   let oldFile;
 
   beforeEach(async function() {
-    tmp = await tmpDir();
+    let tmp = await tmpDir();
+
+    await execa('ember', [
+      'new',
+      'my-app',
+      '-sg',
+      '-sn'
+    ], {
+      cwd: tmp,
+      stdio: 'inherit',
+      preferLocal: true,
+      localDir: __dirname
+    });
+
+    projectPath = path.join(tmp, projectName);
   });
 
   afterEach(async function() {
@@ -60,20 +73,6 @@ describe(Server, function() {
   }
 
   it('works', async function() {
-    await execa('ember', [
-      'new',
-      'my-app',
-      '-sg',
-      '-sn'
-    ], {
-      cwd: tmp,
-      stdio: 'inherit',
-      preferLocal: true,
-      localDir: __dirname
-    });
-
-    projectPath = path.join(tmp, projectName);
-
     process.chdir(projectPath);
 
     server = new Server();
