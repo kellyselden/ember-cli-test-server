@@ -12,6 +12,12 @@ class Server {
 
     let cwd = await pkgDir();
 
+    await execa('npm', ['run', 'env'], {
+      cwd,
+      stdio: 'inherit',
+      ...options
+    });
+
     this.server = execa('npm', ['start'], {
       cwd,
       ...options

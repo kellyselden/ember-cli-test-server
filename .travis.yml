@@ -13,6 +13,8 @@ env:
 - DEBUG=ember-cli-test-server
 before_script:
 - npm run lint
+# script:
+# - node node_modules/mocha/bin/_mocha
 jobs:
   include:
   - os: windows

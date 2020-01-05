@@ -70,18 +70,35 @@ describe(Server, function() {
   }
 
   it('works', async function() {
+    // eslint-disable-next-line no-console
+    console.log('process', process);
+
+    let separator = process.platform === 'win32' ? ';' : ':';
+
     let options = {
       cwd: projectPath,
       env: {
         // ignore any global packages that would mess with the test
         Path: path.dirname(process.execPath)
+
+        // still finds global ember
+        // PATH: process.env.Path.split(separator).filter(p => !p.includes(path.resolve(__dirname, '..'))).join(separator)
       }
     };
+
+    // eslint-disable-next-line no-console
+    console.log('options', options);
 
     server = new Server();
 
     await expect(server.start(options), 'handles no install error')
-      .to.eventually.be.rejectedWith('\'ember\' is not recognized as an internal or external command');
+      .to.eventually.be.rejectedWith((() => {
+        switch (process.platform) {
+          case 'win32': return '\'ember\' is not recognized as an internal or external command';
+          case 'darwin': return 'ember: command not found';
+          default: return 'ember: not found';
+        }
+      })());
 
     await expect(server.stop(), 'can stop no install error')
       .to.eventually.be.fulfilled;
