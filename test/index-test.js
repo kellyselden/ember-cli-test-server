@@ -71,15 +71,19 @@ describe(Server, function() {
 
   it('works', async function() {
     let options = {
-      cwd: projectPath
+      cwd: projectPath,
+      env: {
+        // ignore any global packages that would mess with the test
+        Path: path.dirname(process.execPath)
+      }
     };
 
     server = new Server();
 
-    await expect(server.start(options), 'handles missing dependencies error')
-      .to.eventually.be.rejectedWith('Required packages are missing');
+    await expect(server.start(options), 'handles no install error')
+      .to.eventually.be.rejectedWith('\'ember\' is not recognized as an internal or external command');
 
-    await expect(server.stop(), 'can stop after dependencies error')
+    await expect(server.stop(), 'can stop no install error')
       .to.eventually.be.fulfilled;
 
     await execa('npm', ['install'], {
