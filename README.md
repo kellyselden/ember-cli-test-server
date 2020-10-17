@@ -3,7 +3,7 @@
 [![npm version](https://badge.fury.io/js/ember-cli-test-server.svg)](https://badge.fury.io/js/ember-cli-test-server)
 [![Build Status](https://travis-ci.org/kellyselden/ember-cli-test-server.svg?branch=master)](https://travis-ci.org/kellyselden/ember-cli-test-server)
 
-Start a long-running [EmberCLI](https://ember-cli.com) server in a test environment
+Start a long-running [Ember CLI](https://ember-cli.com) server in a test environment
 
 ## Usage
 
