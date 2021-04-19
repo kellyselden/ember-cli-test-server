@@ -24,7 +24,7 @@
     "node": ">=10.12"
   },
   "dependencies": {
-    "debug": "^4.1.1",
+    "debug": "^4.2.0",
     "execa": "^5.0.0",
     "fkill": "^7.0.0",
     "pkg-dir": "^5.0.0",
