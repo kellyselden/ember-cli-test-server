@@ -21,7 +21,7 @@
   },
   "homepage": "https://github.com/kellyselden/ember-cli-test-server#readme",
   "engines": {
-    "node": ">=10.12"
+    "node": ">=12.13"
   },
   "dependencies": {
     "debug": "^4.2.0",
