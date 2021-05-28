@@ -33,7 +33,7 @@ jobs:
           node: 12
         include:
         - os: ubuntu-latest
-          node: 12.16
+          node: 12.17
 
     runs-on: ${{ matrix.os }}
 
