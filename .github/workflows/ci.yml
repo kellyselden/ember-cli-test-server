@@ -28,12 +28,6 @@ jobs:
         - windows-latest
         node:
         - 12
-        exclude:
-        - os: ubuntu-latest
-          node: 12
-        include:
-        - os: ubuntu-latest
-          node: 12.16
 
     runs-on: ${{ matrix.os }}
 
