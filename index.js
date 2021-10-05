@@ -1,7 +1,6 @@
 'use strict';
 
 const execa = require('execa');
-const pkgDir = require('pkg-dir');
 const psList = require('ps-list');
 const debug = require('debug')(require('./package').name);
 
@@ -9,7 +8,10 @@ class Server {
   async start(options) {
     debug('starting');
 
-    let cwd = await pkgDir();
+    // eslint-disable-next-line prefer-let/prefer-let
+    const { packageDirectory } = await import('pkg-dir');
+
+    let cwd = await packageDirectory();
 
     this.server = execa('npm', ['start'], {
       cwd,
