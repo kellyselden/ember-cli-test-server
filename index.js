@@ -2,7 +2,6 @@
 
 const execa = require('execa');
 const pkgDir = require('pkg-dir');
-const fkill = require('fkill');
 const psList = require('ps-list');
 const debug = require('debug')(require('./package').name);
 
@@ -82,6 +81,9 @@ class Server {
   }
 
   async kill(silent) {
+    // eslint-disable-next-line prefer-let/prefer-let
+    const { default: fkill } = await import('fkill');
+
     await fkill(this.server.pid, {
       force: process.platform === 'win32',
       ...silent ? { silent } : {}
@@ -103,6 +105,9 @@ class Server {
 
         if (ps.name === 'ember') {
           debug(`killing pid ${ps.pid}`);
+
+          // eslint-disable-next-line prefer-let/prefer-let
+          const { default: fkill } = await import('fkill');
 
           await fkill(ps.pid, { silent: true });
 
