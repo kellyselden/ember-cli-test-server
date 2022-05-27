@@ -7,7 +7,6 @@ const tmpDir = promisify(require('tmp').dir);
 const readFile = promisify(require('fs').readFile);
 const writeFile = promisify(require('fs').writeFile);
 const path = require('path');
-const execa = require('execa');
 const Server = require('..');
 
 const projectName = 'my-app';
@@ -21,6 +20,9 @@ describe(Server, function() {
 
   beforeEach(async function() {
     let tmp = await tmpDir();
+
+    // eslint-disable-next-line prefer-let/prefer-let
+    const { execa } = await import('execa');
 
     await execa('ember', [
       'new',
@@ -81,6 +83,9 @@ describe(Server, function() {
 
     await expect(server.stop(), 'can stop after dependencies error')
       .to.eventually.be.fulfilled;
+
+    // eslint-disable-next-line prefer-let/prefer-let
+    const { execa } = await import('execa');
 
     await execa('npm', ['install'], {
       cwd: projectPath,
