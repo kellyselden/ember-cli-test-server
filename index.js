@@ -1,6 +1,5 @@
 'use strict';
 
-const psList = require('ps-list');
 const debug = require('debug')(require('./package').name);
 
 class Server {
@@ -97,6 +96,9 @@ class Server {
   async waitForDeath() {
     if (process.platform === 'linux') {
       let startPrinting;
+
+      // eslint-disable-next-line prefer-let/prefer-let
+      const { default: psList } = await import('ps-list');
 
       for (let ps of await psList()) {
         if (ps.name === 'npm') {
