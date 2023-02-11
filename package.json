@@ -37,7 +37,7 @@
     "@kellyselden/node-template": "3.0.2",
     "chai": "^4.3.7",
     "chai-as-promised": "^7.1.1",
-    "ember-cli": "4.9.2",
+    "ember-cli": "4.10.0",
     "eslint": "^8.31.0",
     "eslint-config-sane": "^1.0.2",
     "eslint-config-sane-node": "^1.1.1",
