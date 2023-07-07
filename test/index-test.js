@@ -12,7 +12,7 @@ const Server = require('..');
 const projectName = 'my-app';
 
 describe(Server, function() {
-  this.timeout(5 * 60 * 1000);
+  this.timeout(5 * 60e3);
 
   let projectPath;
   let server;
