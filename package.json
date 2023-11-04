@@ -28,7 +28,7 @@
     "execa": "^8.0.0",
     "fkill": "^8.0.0",
     "pkg-dir": "^8.0.0",
-    "ps-list": "^7.0.0"
+    "ps-list": "^8.0.0"
   },
   "peerDependencies": {
     "ember-cli": ">=3.12.0"
