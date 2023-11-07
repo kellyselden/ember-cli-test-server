@@ -26,7 +26,7 @@
   "dependencies": {
     "debug": "^4.2.0",
     "execa": "^8.0.0",
-    "fkill": "^8.0.0",
+    "fkill": "^9.0.0",
     "pkg-dir": "^8.0.0",
     "ps-list": "^8.0.0"
   },
