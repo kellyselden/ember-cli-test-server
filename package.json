@@ -35,7 +35,7 @@
   },
   "devDependencies": {
     "@kellyselden/node-template": "5.0.1",
-    "chai": "^4.3.10",
+    "chai": "^5.0.0",
     "chai-as-promised": "^7.1.1",
     "ember-cli": "5.5.0",
     "eslint": "^8.53.0",
