@@ -12,7 +12,7 @@ const Server = require('..');
 const projectName = 'my-app';
 
 describe(Server, function() {
-  this.timeout(5 * 60e3);
+  this.timeout((process.platform === 'win32' ? 10 : 5) * 60e3);
 
   let projectPath;
   let server;
