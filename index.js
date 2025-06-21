@@ -7,7 +7,7 @@ class Server {
     debug('starting');
 
     // eslint-disable-next-line prefer-let/prefer-let
-    const { packageDirectory } = await import('pkg-dir');
+    const { packageDirectory } = await import('package-directory');
 
     let cwd = await packageDirectory();
 
