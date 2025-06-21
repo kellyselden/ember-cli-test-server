@@ -1,6 +1,6 @@
 {
   "name": "ember-cli-test-server",
-  "version": "6.0.0",
+  "version": "6.0.1",
   "description": "Start a long-running Ember CLI server in a test environment",
   "main": "index.js",
   "files": [
