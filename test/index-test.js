@@ -92,7 +92,6 @@ describe(Server, function() {
       stdio: 'inherit'
     });
 
-    // eslint-disable-next-line require-atomic-updates
     server = new Server();
 
     let port = await server.start(options);
@@ -103,7 +102,6 @@ describe(Server, function() {
 
     await createInstantBuildError();
 
-    // eslint-disable-next-line require-atomic-updates
     server = new Server();
 
     await expect(server.start(options), 'handles instant build error')
@@ -116,7 +114,6 @@ describe(Server, function() {
 
     await createHungBuildError();
 
-    // eslint-disable-next-line require-atomic-updates
     server = new Server();
 
     await expect(server.start(options), 'handles hung build error')
