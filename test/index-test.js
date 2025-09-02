@@ -28,12 +28,12 @@ describe(Server, function() {
       'new',
       'my-app',
       '-sg',
-      '-sn'
+      '-sn',
     ], {
       cwd: tmp,
       stdio: 'inherit',
       preferLocal: true,
-      localDir: __dirname
+      localDir: __dirname,
     });
 
     projectPath = path.join(tmp, projectName);
@@ -73,7 +73,7 @@ describe(Server, function() {
 
   it('works', async function() {
     let options = {
-      cwd: projectPath
+      cwd: projectPath,
     };
 
     server = new Server();
@@ -89,10 +89,9 @@ describe(Server, function() {
 
     await execa('npm', ['install'], {
       cwd: projectPath,
-      stdio: 'inherit'
+      stdio: 'inherit',
     });
 
-    // eslint-disable-next-line require-atomic-updates
     server = new Server();
 
     let port = await server.start(options);
@@ -103,7 +102,6 @@ describe(Server, function() {
 
     await createInstantBuildError();
 
-    // eslint-disable-next-line require-atomic-updates
     server = new Server();
 
     await expect(server.start(options), 'handles instant build error')
@@ -116,7 +114,6 @@ describe(Server, function() {
 
     await createHungBuildError();
 
-    // eslint-disable-next-line require-atomic-updates
     server = new Server();
 
     await expect(server.start(options), 'handles hung build error')

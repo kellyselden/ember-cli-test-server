@@ -16,7 +16,7 @@ class Server {
 
     this.server = execa('npm', ['start'], {
       cwd,
-      ...options
+      ...options,
     });
 
     this.server.stdout.pipe(process.stdout);
@@ -89,7 +89,7 @@ class Server {
 
     await fkill(this.server.pid, {
       force: process.platform === 'win32',
-      ...silent ? { silent } : {}
+      ...silent ? { silent } : {},
     });
   }
 
