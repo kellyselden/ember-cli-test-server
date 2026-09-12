@@ -1,6 +1,6 @@
 {
   "name": "ember-cli-test-server",
-  "version": "7.0.0",
+  "version": "7.1.0",
   "description": "Start a long-running Ember CLI server in a test environment",
   "homepage": "https://github.com/kellyselden/ember-cli-test-server#readme",
   "bugs": {
