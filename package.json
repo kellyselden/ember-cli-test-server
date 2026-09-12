@@ -38,7 +38,7 @@
     "mocha": "^11.7.1",
     "mocha-helpers": "^11.0.0",
     "standard-node-template": "8.0.0",
-    "tmp": "0.2.5"
+    "tmp": "0.2.7"
   },
   "peerDependencies": {
     "ember-cli": ">=3.12.0"
